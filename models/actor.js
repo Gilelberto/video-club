@@ -7,7 +7,7 @@ const schema = mongoose.Schema({
 });
 
 //Clase
-class Director{
+class Actor{
     constructor(name,lastName){
         this._name = name;
         this._lastName = lastName;
@@ -29,5 +29,5 @@ class Director{
 }
 
 //JUntar el schema con la clase
-schema.loadClass(Director);
-module.exports = mongoose.model('Director', schema);
+schema.loadClass(Actor);
+module.exports = mongoose.model('Actor', schema);
