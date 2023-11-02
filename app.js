@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const { expressjwt } = require('express-jwt'); 
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -17,6 +18,7 @@ const copiesRouter = require('./routes/copies');
 const awaitListsRouter = require('./routes/awaitLists');
 
 
+const JwtKey = "463340bc6da8a098337c344e22ae8029";
 
 const app = express();
 
@@ -41,6 +43,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(expressjwt({secret:JwtKey, algorithms:['HS256']})
+  .unless({path:["/login"]}));
 
   //middlewares de enrutamiento
 app.use('/', indexRouter);

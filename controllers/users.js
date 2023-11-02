@@ -1,17 +1,29 @@
 const express = require('express');
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
-function create(req, res, next){
+async function create(req, res, next){
     const name = req.body.name;
     const lastName = req.body.lastName;
     const email = req.body.email;
     const password = req.body.password;
+
+    //seguridad
+
+                                //recibe el numero de iteraciones sobre una cadena para complicar el hash
+    let saltKey = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password,saltKey);
+
     let user = new User({
-        name:name, lastName:lastName, email:email, password:password
+        name:name, 
+        lastName:lastName, 
+        email:email, 
+        password:passwordHash,
+        saltKey: saltKey
     });
     user.save().then(obj => res.status(200).json({
         message:"Usuario creado correctamente", 
-        obj:obj
+        obj:obj //no deberíamos mandar todo el objeto, porque trae el saltKey y el password
     })).catch(ex => res.status(500).json({
         message:"No se puedo almacenar el usuario",
         obj:ex
