@@ -5,6 +5,9 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const { expressjwt } = require('express-jwt'); 
+const config = require('config');
+const i18n = require('i18n');
+
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -18,7 +21,7 @@ const copiesRouter = require('./routes/copies');
 const awaitListsRouter = require('./routes/awaitLists');
 
 
-const JwtKey = "463340bc6da8a098337c344e22ae8029";
+const JwtKey = config.get("secret.key");
 
 const app = express();
 
@@ -34,6 +37,12 @@ db.on('error',()=>{
   console.log("NO se ha podido conectar");
 });
 
+i18n.configure({
+  locales: ['es','en'],
+  cookie: 'language',
+  directory: `${__dirname}/locales`
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -42,6 +51,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(i18n.init); //le pasamos la función pero no la ejecutamos
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(expressjwt({secret:JwtKey, algorithms:['HS256']})
